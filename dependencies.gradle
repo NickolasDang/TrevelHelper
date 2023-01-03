@@ -1,0 +1,12 @@
+ext {
+    retrofitVersion = '2.9.0'
+    retrofitDependencise = [
+            retrofit: "com.squareup.retrofit2:retrofit:${retrofitVersion}",
+            moshi: "com.squareup.retrofit2:converter-moshi:${retrofitVersion}"
+    ]
+
+    moshiVersion = '1.14.0'
+    moshiDependencise = [
+            kotlinJsonAdapterFactory: "com.squareup.moshi:moshi-kotlin:${moshiVersion}"
+    ]
+}
