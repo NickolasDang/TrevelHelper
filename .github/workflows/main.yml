@@ -7,7 +7,7 @@ on:
     branches: [master]
     
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -22,5 +22,23 @@ jobs:
       - name: Upload html test report
         uses: actions/upload-artifact@v2
         with:
-          name: index.html
+          name: lint_report.html
           path: app/build/reports/lint-results-debug.html
+
+  unit-tests:
+    needs: [lint]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+
+      - name: Run unit tests
+        run: ./gradlew test
+
+      - name: Upload unit test report
+        uses: actions/upload-artifact@v2
+        with:
+          name: unit_test_report.html
+          patch: app/build/reports/tests/testDebugUnitTest.html
+
+
