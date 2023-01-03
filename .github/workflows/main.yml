@@ -55,9 +55,9 @@ jobs:
           script: ./gradlew connectedCheck
 
       - name: Upload instrumentation test report
-          uses: actions/upload-artifact@v2
-          with:
-            name: instrumentation_test_report.html
-            path: app/build/reports/androidTests/connected/
+        uses: actions/upload-artifact@v2
+        with:
+          name: instrumentation_test_report.html
+          path: app/build/reports/androidTests/connected/
 
 
