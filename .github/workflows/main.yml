@@ -40,7 +40,7 @@ jobs:
           path: app/build/reports
 
   build:
-    needs: [tests]
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
