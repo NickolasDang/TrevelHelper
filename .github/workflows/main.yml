@@ -7,43 +7,8 @@ on:
     branches: [master]
     
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v2
-
-      - name: Grand gradlew permissions
-        run: chmod +x ./gradlew
-
-      - name: Run Lint
-        run: ./gradlew lintDebug
-      
-      - name: Upload html test report
-        uses: actions/upload-artifact@v2
-        with:
-          name: lint_report.html
-          path: app/build/reports/lint-results-debug.html
-
-  unit-tests:
-    needs: [lint]
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v2
-
-      - name: Run unit tests
-        run: ./gradlew test
-
-      - name: Upload unit test report
-        uses: actions/upload-artifact@v2
-        with:
-          name: unit_test_report.html
-          path: app/build/reports/tests/testDebugUnitTest/index.html
-
-  instrumentation-tests:
-    needs: [unit-tests]
-    runs-on: macos-latest
     steps:
       - name: Checkout the code
         uses: actions/checkout@v2
@@ -53,21 +18,29 @@ jobs:
         with:
           java-version: 11
 
+      - name: Grand gradlew permissions
+        run: chmod +x ./gradlew
+
+      - name: Run Lint
+        run: ./gradlew lintDebug
+
+      - name: Run unit tests
+        run: ./gradlew test
+
       - name: Run instrumentation tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
           script: ./gradlew connectedCheck
-
-      - name: Upload instrumentation test report
-        uses: actions/upload-artifact@v2
+      
+      - name: Upload test reports
+        uses: actions/upload-artifact@v3
         with:
-          name: instrumentation_test_report.html
-          path: app/build/reports/androidTests/connected/
+          name: test-reports.html
+          path: app/build/reports
 
-  package:
-    needs: [instrumentation-tests]
-    name: Generate APK
+  build:
+    needs: [tests]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
@@ -81,11 +54,13 @@ jobs:
       - name: Build debug APK
         run: ./gradlew assembleDebug --stacktrace
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
+      - name: Upload APK to Firebase Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.2.1
         with:
-          name: trevel-helper.apk
-          path: app/build/outputs/apk/debug/app-debug.apk
+          appId: ${{secrets.FIREBASE_APP_ID}}
+          token: ${{secrets.FIREBASE_TOKEN}}
+          groups: Testers
+          file: app/build/outputs/apk/debug/app-debug.apk
 
 
 
