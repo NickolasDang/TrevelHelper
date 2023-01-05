@@ -55,7 +55,7 @@ jobs:
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload APK to Firebase Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1g
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{secrets.FIREBASE_APP_ID}}
           serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
